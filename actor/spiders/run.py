@@ -4,7 +4,6 @@ import os
 import apify
 import logging
 from scrapy import Spider
-from urllib.parse import urljoin
 from apify_client import ApifyClient
 from scrapy.http.request import Request
 
@@ -34,14 +33,6 @@ class economic_calender(Spider):
 
         self.logger = logging.getLogger()
 
-        if self.env is None:
-
-            # Initialize the main ApifyClient instance
-            client = ApifyClient(os.environ['APIFY_TOKEN'], api_url=os.environ['APIFY_API_BASE_URL'])
-
-            # Get the resource subclient for working with the default key-value store of the actor
-            default_kv_store_client = client.key_value_store(os.environ['APIFY_DEFAULT_KEY_VALUE_STORE_ID'])
-
         yield Request(url=self.input_url,
                       callback=self.parse_overview_page)
 
@@ -54,4 +45,7 @@ class economic_calender(Spider):
             data = data[::-1]
 
             for d in data:
-                yield d
+                if self.env is None:
+                    apify.pushData(d)
+                else:
+                    yield d
