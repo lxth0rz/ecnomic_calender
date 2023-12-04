@@ -38,7 +38,7 @@ class economic_calender(Spider):
 
     def parse_overview_page(self, response):
 
-        data = re.findall('dataProvider,\n(\[\{.+"}])', response.text)
+        data = re.findall('\[\{"id":".+\]', response.text)
         if data and len(data) > 0:
             data = data[0].strip()
             data = json.loads(data)
